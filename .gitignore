@@ -1,6 +1,7 @@
-# Datas from user
+# Datas
 dataset/
 uploads/
+*.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
