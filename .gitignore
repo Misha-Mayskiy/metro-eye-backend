@@ -1,6 +1,6 @@
 # Datas from user
-dataset/*
-uploads/*
+dataset/
+uploads/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
