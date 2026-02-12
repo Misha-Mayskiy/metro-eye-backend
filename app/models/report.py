@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Enum
-from sqlalchemy.orm import relationship
+from sqlalchemy import Integer, String, DateTime, ForeignKey, Enum
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 from datetime import datetime
 import enum
 from app.core.database import Base
@@ -24,14 +24,13 @@ class ReportCategory(str, enum.Enum):
 class Report(Base):
     __tablename__ = "reports"
 
-    id = Column(Integer, primary_key=True, index=True)
-    category = Column(Enum(ReportCategory), nullable=False, index=True)
-    description = Column(String)
-    location_info = Column(String, nullable=False)
-    photo_path = Column(String)
-    status = Column(Enum(ReportStatus), default=ReportStatus.PENDING)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    category: Mapped[ReportCategory] = mapped_column(Enum(ReportCategory), nullable=False)
+    description: Mapped[str | None] = mapped_column(String, nullable=True)
+    location_info: Mapped[str] = mapped_column(String, nullable=False)
+    photo_path: Mapped[str] = mapped_column(String, nullable=False)
+    status: Mapped[ReportStatus] = mapped_column(Enum(ReportStatus), default=ReportStatus.PENDING)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
-    user_id = Column(Integer, ForeignKey("users.id"))
-
-    owner = relationship("User", back_populates="reports")
+    user_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
+    owner: Mapped["User"] = relationship("User", back_populates="reports")

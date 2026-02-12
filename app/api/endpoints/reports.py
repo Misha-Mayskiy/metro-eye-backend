@@ -2,8 +2,10 @@ from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException
 from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.models.report import Report, ReportCategory
+from app.models.user import User
 from app.services.file_service import file_service
 from app.schemas.report import ReportRead
+from app.api.deps import get_current_user
 
 router = APIRouter()
 
@@ -14,7 +16,8 @@ async def create_report(
     location_info: str = Form(...),
     description: str = Form(None),
     photo: UploadFile = File(...),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     if photo.content_type and not photo.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="File must be an image")
@@ -26,7 +29,7 @@ async def create_report(
         description=description,
         location_info=location_info,
         photo_path=photo_relative_path,
-        user_id=None
+        user_id=current_user.id
     )
 
     db.add(new_report)
